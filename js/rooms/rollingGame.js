@@ -1,14 +1,11 @@
 // rollingGame.js
 
 export function createRollingGame(scene) {
-    // Textúra pre nejaký mini-game background
+    // Tu nepridávame Poua
     const texture = new THREE.TextureLoader().load('texture/rollingGameBg.jpg');
-
     const geometry = new THREE.PlaneGeometry(10, 6);
     const material = new THREE.MeshBasicMaterial({ map: texture });
-
-    const rollingGamePlane = new THREE.Mesh(geometry, material);
-    rollingGamePlane.position.set(0, 0, 0);
-
-    scene.add(rollingGamePlane);
+    const backgroundPlane = new THREE.Mesh(geometry, material);
+    backgroundPlane.position.set(0, 0, 0);
+    scene.add(backgroundPlane);
 }
