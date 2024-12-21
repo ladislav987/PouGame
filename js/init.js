@@ -7,12 +7,12 @@ export let camera, scene, renderer;
 export function init() {
     scene = new THREE.Scene();
 
-    // ... (OrthographicCamera nastavenia ako predtým)
     const width = window.innerWidth;
     const height = window.innerHeight;
     const aspect = width / height;
     const viewSize = 5;
 
+    // Vytvoríme OrthographicCamera
     camera = new THREE.OrthographicCamera(
         -aspect * viewSize,
         aspect * viewSize,
@@ -24,20 +24,21 @@ export function init() {
     camera.position.set(0, 0, 10);
     camera.lookAt(scene.position);
 
+    // Uložíme ju do window, aby bola dostupná aj v kitchen.js
+    window.camera = camera;
+
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
     document.getElementById('game-container').appendChild(renderer.domElement);
 
-    // Na začiatku vytvoríme default miestnosť (living)
+    // Defaultná miestnosť (obývačka)
     createLivingRoom(scene);
 
-    // Tu zavoláme vytvorenie tlačidiel
-    // switchRoomFn bude anonymná funkcia, ktorá vyvolá switchRoom(scene, roomName)
+    // Tlačidlá na prepínanie miestností
     createRoomButtons((roomName) => {
         switchRoom(scene, roomName);
     });
 
-    // A event listener na resize
     window.addEventListener('resize', onWindowResize);
 }
 
