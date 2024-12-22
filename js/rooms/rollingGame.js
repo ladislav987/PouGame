@@ -1,10 +1,11 @@
+import { gameState } from '../rollingGame/gameState.js';
 import { createCamera } from '../rollingGame/rollingGameCreateCamera.js';
 import { createRenderer } from '../rollingGame/rollingGameCreateRenderer.js';
 import { addObstacle } from '../rollingGame/rollingGameAddObstacle.js';
 import { handleKeyDown, handleKeyUp } from '../rollingGame/rollingGameControls.js';
 import { checkCollision } from '../rollingGame/rollingGameCheckCollision.js';
 import { endGame } from '../rollingGame/rollingGameEndGame.js';
-import {gameState} from "../rollingGame/gameState.js";
+import { gameScore, updateScoreDisplay, showFinalScore } from '../rollingGame/rollingGameScore.js';
 
 export let camera, renderer, controls, scene, pouSphere, obstacles = [];
 let animationId;
@@ -87,9 +88,14 @@ function animate() {
         if (checkCollision(pouSphere, obstacle)) {
             console.log(`Kolízia s prekážkou na pozícii: x=${obstacle.position.x}, y=${obstacle.position.y}, z=${obstacle.position.z}`);
             endGame(gameState);
+            showFinalScore(); // Zobrazenie konečného skóre
             return;
         }
     }
+
+    // Aktualizácia skóre
+    gameScore.value += autoMoveSpeed; // Aktualizácia hodnoty skóre
+    updateScoreDisplay(); // Aktualizácia zobrazenia skóre
 
     renderer.render(scene, camera);
 }
