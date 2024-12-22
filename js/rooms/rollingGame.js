@@ -2,9 +2,10 @@ export let camera, renderer, controls, scene; // Globálne premenlivé
 let animationId;
 let pouSphere; // Globálna referencia na Poua
 let obstacles = []; // Pole pre prekážky (valce a iné objekty)
-const movement = { w: false, s: false, a: false, d: false }; // Stav stlačených kláves
-const speed = 0.1; // Rýchlosť pohybu
+const movement = { a: false, d: false }; // Stav stlačených kláves (iba do strán)
+const speed = 0.1; // Rýchlosť pohybu do strán
 const autoMoveSpeed = 0.05; // Konštantná rýchlosť pohybu Poua dopredu
+let isGameOver = false; // Stav hry (či skončila)
 
 export function createRollingGame(existingScene) {
     // Ak existuje existujúca scéna, použijeme ju, inak vytvoríme novú
@@ -84,35 +85,33 @@ function onWindowResize() {
 }
 
 function onKeyDown(event) {
+    if (isGameOver) return; // Ak je koniec hry, pohyb nefunguje
     switch (event.key.toLowerCase()) {
-        case 'w': movement.w = true; break;
-        case 's': movement.s = true; break;
-        case 'a': movement.a = true; break;
-        case 'd': movement.d = true; break;
+        case 'a': movement.a = true; break; // Pohyb doľava
+        case 'd': movement.d = true; break; // Pohyb doprava
     }
 }
 
 function onKeyUp(event) {
+    if (isGameOver) return; // Ak je koniec hry, pohyb nefunguje
     switch (event.key.toLowerCase()) {
-        case 'w': movement.w = false; break;
-        case 's': movement.s = false; break;
         case 'a': movement.a = false; break;
         case 'd': movement.d = false; break;
     }
 }
 
 function animate() {
+    if (isGameOver) return; // Ak je koniec hry, zastav animáciu
+
     animationId = requestAnimationFrame(animate);
 
-    // Konštantný pohyb Poua
+    // Konštantný pohyb Poua dopredu
     pouSphere.position.z -= autoMoveSpeed;
     pouSphere.rotation.x -= autoMoveSpeed;
 
-    // Manuálny pohyb Poua
-    if (movement.w) pouSphere.position.z -= speed;
-    if (movement.s) pouSphere.position.z += speed;
-    if (movement.a) pouSphere.position.x -= speed;
-    if (movement.d) pouSphere.position.x += speed;
+    // Pohyb Poua do strán
+    if (movement.a) pouSphere.position.x -= speed; // Pohyb doľava
+    if (movement.d) pouSphere.position.x += speed; // Pohyb doprava
 
     // Kamera
     const cameraOffset = new THREE.Vector3(0, 10, 15);
@@ -125,8 +124,7 @@ function animate() {
     for (const obstacle of obstacles) {
         if (checkCollision(pouSphere, obstacle)) {
             console.log(`Kolízia s prekážkou na pozícii: x=${obstacle.position.x}, y=${obstacle.position.y}, z=${obstacle.position.z}`);
-            cancelAnimationFrame(animationId); // Zastavenie animácie
-            alert('Koniec hry! Pou sa dotkol prekážky.'); // Správa o konci hry
+            endGame();
             return;
         }
     }
@@ -140,3 +138,17 @@ function checkCollision(obj1, obj2) {
     return obj1Box.intersectsBox(obj2Box); // Zisti, či sa obálky prekrývajú
 }
 
+function endGame() {
+    isGameOver = true; // Nastavíme stav hry na "koniec"
+    const gameOverText = document.createElement('div');
+    gameOverText.style.position = 'absolute';
+    gameOverText.style.top = '50%';
+    gameOverText.style.left = '50%';
+    gameOverText.style.transform = 'translate(-50%, -50%)';
+    gameOverText.style.color = 'red';
+    gameOverText.style.fontSize = '48px';
+    gameOverText.style.fontWeight = 'bold';
+    gameOverText.style.textAlign = 'center';
+    gameOverText.textContent = 'Koniec hry!';
+    document.body.appendChild(gameOverText); // Zobrazíme text na obrazovke
+}
