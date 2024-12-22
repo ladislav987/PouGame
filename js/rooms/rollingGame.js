@@ -19,8 +19,8 @@ export function createRollingGame(existingScene) {
         0.01, // blízka rovina
         1000 // vzdialená rovina
     );
-    camera.position.set(0, 10, 60); // Kamera nad Pou a mierne vzadu
-    camera.lookAt(0, 1, 45); // Kamera smeruje priamo na Pou
+    camera.position.set(0, 10, 150); // Kamera nad Pou a mierne vzadu
+    camera.lookAt(0, 1, 0); // Kamera smeruje priamo na Pou
 
     // Renderer
     renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -31,9 +31,10 @@ export function createRollingGame(existingScene) {
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true; // Plynulé ovládanie
     controls.dampingFactor = 0.05;
+    controls.enableRotate = false; // Zakáže otáčanie kamery
 
-    // Plošina (5× dlhšia v smere Z)
-    const geometryPlane = new THREE.PlaneGeometry(20, 100); // šírka 20, dĺžka 100
+    // Plošina (3× dlhšia v smere Z)
+    const geometryPlane = new THREE.PlaneGeometry(20, 1500); // šírka 20, dĺžka 1500
     const materialPlane = new THREE.MeshBasicMaterial({ color: 0x747570, side: THREE.DoubleSide });
     const plane = new THREE.Mesh(geometryPlane, materialPlane);
     plane.rotation.x = -Math.PI / 2; // Normála plošiny smeruje nahor
@@ -44,7 +45,7 @@ export function createRollingGame(existingScene) {
     const texturePou = new THREE.TextureLoader().load('texture/pou.png'); // Textúra Poua
     const materialSphere = new THREE.MeshBasicMaterial({ map: texturePou });
     pouSphere = new THREE.Mesh(geometrySphere, materialSphere);
-    pouSphere.position.set(0, 1, 45); // Pou je na začiatku plošiny (blízko jej okraja)
+    pouSphere.position.set(0, 1, 145); // Pou je na začiatku plošiny
     scene.add(pouSphere);
 
     // Svetlá
@@ -116,6 +117,7 @@ function animate() {
     const cameraOffset = new THREE.Vector3(0, 10, 15); // Offset kamery od Pou
     camera.position.copy(pouSphere.position.clone().add(cameraOffset)); // Nastav pozíciu kamery
     camera.lookAt(pouSphere.position); // Kamera smeruje na Pou
+    controls.target.copy(pouSphere.position); // Aktualizácia cieľa kamery
 
     controls.update(); // Plynulé ovládanie kamery
     renderer.render(scene, camera);
