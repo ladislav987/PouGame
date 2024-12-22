@@ -36,6 +36,14 @@ export function createRollingGame(existingScene) {
     plane.rotation.x = -Math.PI / 2; // Normála plošiny smeruje nahor
     scene.add(plane);
 
+    // Pridanie Poua ako gule
+    const geometrySphere = new THREE.SphereGeometry(1, 32, 32); // Guľa s polomerom 1
+    const texturePou = new THREE.TextureLoader().load('texture/pou.png'); // Textúra Poua
+    const materialSphere = new THREE.MeshBasicMaterial({ map: texturePou });
+    const pouSphere = new THREE.Mesh(geometrySphere, materialSphere);
+    pouSphere.position.set(0, 1, 0); // Umiestnenie na plošinu (zvýšené o 1)
+    scene.add(pouSphere);
+
     // Svetlá
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(10, 10, 10);
