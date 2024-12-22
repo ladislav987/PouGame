@@ -12,8 +12,8 @@ import { isCollidingWithBoundary } from '../rollingGame/rollingGameCollisionChec
 export let camera, renderer, controls, scene, pouSphere, obstacles = [];
 let boundaries = [];
 const movement = { a: false, d: false };
-const speed = 0.1;
-const autoMoveSpeed = 0.05;
+let speed = 0.1;
+let autoMoveSpeed = 0.05;
 
 export function createRollingGame(existingScene) {
     scene = existingScene || new THREE.Scene();
@@ -102,8 +102,15 @@ function animate() {
         }
     }
 
+    // Zrýchlenie každých 100 bodov
+    if (Math.floor(gameScore.value / 100) > Math.floor((gameScore.value - autoMoveSpeed) / 100)) {
+        autoMoveSpeed += 0.01; // Zvýšenie rýchlosti
+        console.log(`Zrýchlenie! Aktuálna rýchlosť: ${autoMoveSpeed.toFixed(2)}`);
+    }
+
     gameScore.value += autoMoveSpeed;
     updateScoreDisplay();
 
     renderer.render(scene, camera);
 }
+
