@@ -1,4 +1,4 @@
-export let camera, renderer, controls, scene;
+export let camera, renderer, controls, scene; // Globálne premenlivé
 let animationId;
 let pouSphere; // Globálna referencia na Poua
 const movement = { w: false, s: false, a: false, d: false }; // Stav stlačených kláves
@@ -9,7 +9,7 @@ export function createRollingGame(existingScene) {
     const oldCanvas = document.querySelector('#game-container canvas');
     if (oldCanvas) oldCanvas.remove();
 
-    // Ak už máme scénu, použijeme ju
+    // Inicializácia scény, ak ešte neexistuje
     scene = existingScene || new THREE.Scene();
 
     // Vytvoríme novú perspektívnu kameru pre 3D pohľad
@@ -19,8 +19,8 @@ export function createRollingGame(existingScene) {
         0.01, // blízka rovina
         1000 // vzdialená rovina
     );
-    camera.position.set(0, 10, 15); // Kamera nad plošinou a mierne vzadu
-    camera.lookAt(0, 0, 0); // Smeruje na stred scény (plošina)
+    camera.position.set(0, 10, 60); // Kamera nad Pou a mierne vzadu
+    camera.lookAt(0, 1, 45); // Kamera smeruje priamo na Pou
 
     // Renderer
     renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -29,11 +29,11 @@ export function createRollingGame(existingScene) {
 
     // Ovládanie kamery pomocou OrbitControls
     controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
+    controls.enableDamping = true; // Plynulé ovládanie
     controls.dampingFactor = 0.05;
 
-    // Plošina
-    const geometryPlane = new THREE.PlaneGeometry(20, 20); // plošina 20x20
+    // Plošina (5× dlhšia v smere Z)
+    const geometryPlane = new THREE.PlaneGeometry(20, 100); // šírka 20, dĺžka 100
     const materialPlane = new THREE.MeshBasicMaterial({ color: 0x747570, side: THREE.DoubleSide });
     const plane = new THREE.Mesh(geometryPlane, materialPlane);
     plane.rotation.x = -Math.PI / 2; // Normála plošiny smeruje nahor
@@ -44,7 +44,7 @@ export function createRollingGame(existingScene) {
     const texturePou = new THREE.TextureLoader().load('texture/pou.png'); // Textúra Poua
     const materialSphere = new THREE.MeshBasicMaterial({ map: texturePou });
     pouSphere = new THREE.Mesh(geometrySphere, materialSphere);
-    pouSphere.position.set(0, 1, 0); // Umiestnenie na plošinu (zvýšené o 1)
+    pouSphere.position.set(0, 1, 45); // Pou je na začiatku plošiny (blízko jej okraja)
     scene.add(pouSphere);
 
     // Svetlá
@@ -111,6 +111,11 @@ function animate() {
         pouSphere.position.x += speed; // Pohyb doprava
         pouSphere.rotation.z -= speed; // Rotácia doprava
     }
+
+    // Kamera sleduje Poua
+    const cameraOffset = new THREE.Vector3(0, 10, 15); // Offset kamery od Pou
+    camera.position.copy(pouSphere.position.clone().add(cameraOffset)); // Nastav pozíciu kamery
+    camera.lookAt(pouSphere.position); // Kamera smeruje na Pou
 
     controls.update(); // Plynulé ovládanie kamery
     renderer.render(scene, camera);
