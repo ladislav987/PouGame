@@ -1,5 +1,8 @@
 export let camera, renderer, controls, scene;
 let animationId;
+let pouSphere; // Globálna referencia na Poua
+const movement = { w: false, s: false, a: false, d: false }; // Stav stlačených kláves
+const speed = 0.1; // Rýchlosť pohybu
 
 export function createRollingGame(existingScene) {
     // Odstránenie starého canvas
@@ -40,7 +43,7 @@ export function createRollingGame(existingScene) {
     const geometrySphere = new THREE.SphereGeometry(1, 32, 32); // Guľa s polomerom 1
     const texturePou = new THREE.TextureLoader().load('texture/pou.png'); // Textúra Poua
     const materialSphere = new THREE.MeshBasicMaterial({ map: texturePou });
-    const pouSphere = new THREE.Mesh(geometrySphere, materialSphere);
+    pouSphere = new THREE.Mesh(geometrySphere, materialSphere);
     pouSphere.position.set(0, 1, 0); // Umiestnenie na plošinu (zvýšené o 1)
     scene.add(pouSphere);
 
@@ -51,6 +54,10 @@ export function createRollingGame(existingScene) {
 
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
+
+    // Event listener pre pohyb pomocou W, S, A, D
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
 
     // Aktualizácia veľkosti pri zmene okna
     window.addEventListener('resize', onWindowResize);
@@ -66,8 +73,45 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+function onKeyDown(event) {
+    switch (event.key.toLowerCase()) {
+        case 'w': movement.w = true; break;
+        case 's': movement.s = true; break;
+        case 'a': movement.a = true; break;
+        case 'd': movement.d = true; break;
+    }
+}
+
+function onKeyUp(event) {
+    switch (event.key.toLowerCase()) {
+        case 'w': movement.w = false; break;
+        case 's': movement.s = false; break;
+        case 'a': movement.a = false; break;
+        case 'd': movement.d = false; break;
+    }
+}
+
 function animate() {
     animationId = requestAnimationFrame(animate);
+
+    // Pohyb Poua
+    if (movement.w) {
+        pouSphere.position.z -= speed; // Pohyb dopredu
+        pouSphere.rotation.x -= speed; // Rotácia v smere pohybu
+    }
+    if (movement.s) {
+        pouSphere.position.z += speed; // Pohyb dozadu
+        pouSphere.rotation.x += speed; // Rotácia v smere pohybu
+    }
+    if (movement.a) {
+        pouSphere.position.x -= speed; // Pohyb doľava
+        pouSphere.rotation.z += speed; // Rotácia pri doľava
+    }
+    if (movement.d) {
+        pouSphere.position.x += speed; // Pohyb doprava
+        pouSphere.rotation.z -= speed; // Rotácia doprava
+    }
+
     controls.update(); // Plynulé ovládanie kamery
     renderer.render(scene, camera);
 }
