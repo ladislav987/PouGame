@@ -1,4 +1,3 @@
-// kitchen.js
 import { addPou } from '../pou.js';
 
 let appleMesh = null;
@@ -10,29 +9,36 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2(); // normalizované súradnice myši
 
 export function createKitchen(scene) {
-    // Vytvoríme pozadie
-    const texture = new THREE.TextureLoader().load('texture/kitchen.jpg');
-    const geometryBG = new THREE.PlaneGeometry(10, 6);
+    // Načítanie textúry pre pozadie s nastaveniami
+    const texture = new THREE.TextureLoader().load('texture/kitchen.jpg', (tex) => {
+        tex.wrapS = THREE.ClampToEdgeWrapping;
+        tex.wrapT = THREE.ClampToEdgeWrapping;
+        tex.minFilter = THREE.LinearFilter;  // alebo THREE.NearestFilter
+        tex.generateMipmaps = false;         // vypneme mipmapy
+    });
+
+    // Nastavíme veľkosť PlaneGeometry na 13.265 x 10, aby pozadie pokrývalo celé zorné pole kamery
+    const geometryBG = new THREE.PlaneGeometry(13.265, 10);
     const materialBG = new THREE.MeshBasicMaterial({ map: texture });
     const backgroundPlane = new THREE.Mesh(geometryBG, materialBG);
     backgroundPlane.position.set(0, 0, 0);
     scene.add(backgroundPlane);
 
-    // Uložíme si pozadie do window, aby sme ho mohli intersectovať
+    // Uložíme pozadie pre prípadný Raycaster
     window.sceneBackground = backgroundPlane;
 
     // Pridáme Poua
     addPou(scene);
 
-    // Jablko
+    // Pridáme jablko
     const appleTexture = new THREE.TextureLoader().load('texture/apple2.png');
-    const geometryApple = new THREE.PlaneGeometry(1, 1); // jablko ~ 1×1
+    const geometryApple = new THREE.PlaneGeometry(1, 1); // veľkosť jablka
     const materialApple = new THREE.MeshBasicMaterial({
         map: appleTexture,
         transparent: true,
     });
     appleMesh = new THREE.Mesh(geometryApple, materialApple);
-    appleMesh.position.set(2, -1, 0.1);
+    appleMesh.position.set(2, -1, 0.1); // umiestnenie jablka
     scene.add(appleMesh);
 
     // Event listenery pre ťahanie myšou
@@ -50,12 +56,12 @@ function onMouseDown(event) {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     // 2) Nastavíme raycaster z myši do kamery
-    //    (camera je v window.camera, nastavená v init.js)
     raycaster.setFromCamera(mouse, window.camera);
 
     // 3) Zistíme, či lúč preťal appleMesh
     const intersects = raycaster.intersectObjects([appleMesh], false);
     if (intersects.length > 0) {
+        // Klikli sme na jablko
         isDragging = true;
         selectedObject = appleMesh;
     }
@@ -68,14 +74,14 @@ function onMouseMove(event) {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    // 2) Na zistenie polohy v scéne s OrthographicCamera
+    // 2) Prepočet myši na súradnice scény
     const vector = new THREE.Vector3(mouse.x, mouse.y, 0);
     vector.unproject(window.camera);
 
-    // 3) Nastavíme jablku novú pozíciu
+    // 3) Nastavíme novú pozíciu jablka
     selectedObject.position.x = vector.x;
     selectedObject.position.y = vector.y;
-    // Z ostáva 0.1, aby bolo mierne vpredu
+    // Zachovávame z=0.1
 }
 
 function onMouseUp() {
