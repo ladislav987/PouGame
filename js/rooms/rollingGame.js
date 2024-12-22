@@ -3,11 +3,10 @@ import { createCamera } from '../rollingGame/rollingGameCreateCamera.js';
 import { createRenderer } from '../rollingGame/rollingGameCreateRenderer.js';
 import { addObstacle } from '../rollingGame/rollingGameAddObstacle.js';
 import { handleKeyDown, handleKeyUp } from '../rollingGame/rollingGameControls.js';
-import { checkCollision } from '../rollingGame/rollingGameCheckCollision.js';
-import { endGame } from '../rollingGame/rollingGameEndGame.js';
-import { gameScore, updateScoreDisplay, showFinalScore } from '../rollingGame/rollingGameScore.js';
+import { gameScore, updateScoreDisplay } from '../rollingGame/rollingGameScore.js';
 import { createBoundaries } from '../rollingGame/rollingGameCreateBoundaries.js';
-import { isCollidingWithBoundary } from '../rollingGame/rollingGameCollisionCheck.js';
+import { onWindowResize } from '../rollingGame/rollingGameOnWindowResize.js';
+import { animate } from '../rollingGame/rollingGameAnimate.js';
 
 export let camera, renderer, controls, scene, pouSphere, obstacles = [];
 let boundaries = [];
@@ -48,7 +47,6 @@ export function createRollingGame(existingScene) {
     addObstacle(scene, obstacles, 5, 2.5, 50);
     addObstacle(scene, obstacles, -5, 2.5, 20);
 
-    // Pridanie osvetlenia
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(10, 10, 10);
     scene.add(light);
@@ -56,61 +54,11 @@ export function createRollingGame(existingScene) {
     const ambientLight = new THREE.AmbientLight(0x404040);
     scene.add(ambientLight);
 
-    // Pridanie bariér na okrajoch
     createBoundaries(scene, boundaries);
 
     window.addEventListener('keydown', (e) => handleKeyDown(e, movement, gameState.isGameOver));
     window.addEventListener('keyup', (e) => handleKeyUp(e, movement, gameState.isGameOver));
-    window.addEventListener('resize', onWindowResize);
+    window.addEventListener('resize', () => onWindowResize(camera, renderer));
 
-    animate();
+    animate(pouSphere, camera, controls, renderer, scene, obstacles, boundaries, movement, speed, autoMoveSpeed, gameScore, gameState);
 }
-
-function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-function animate() {
-    if (gameState.isGameOver) return;
-
-    requestAnimationFrame(animate);
-
-    pouSphere.position.z -= autoMoveSpeed;
-    pouSphere.rotation.x -= autoMoveSpeed;
-
-    if (movement.a && !isCollidingWithBoundary(pouSphere, boundaries[0])) {
-        pouSphere.position.x -= speed;
-    }
-    if (movement.d && !isCollidingWithBoundary(pouSphere, boundaries[1])) {
-        pouSphere.position.x += speed;
-    }
-
-    const cameraOffset = new THREE.Vector3(0, 10, 15);
-    camera.position.copy(pouSphere.position.clone().add(cameraOffset));
-    camera.lookAt(pouSphere.position);
-    controls.target.copy(pouSphere.position);
-    controls.update();
-
-    for (const obstacle of obstacles) {
-        if (checkCollision(pouSphere, obstacle)) {
-            console.log(`Kolízia s prekážkou na pozícii: x=${obstacle.position.x}, y=${obstacle.position.y}, z=${obstacle.position.z}`);
-            endGame(gameState);
-            showFinalScore();
-            return;
-        }
-    }
-
-    // Zrýchlenie každých 100 bodov
-    if (Math.floor(gameScore.value / 100) > Math.floor((gameScore.value - autoMoveSpeed) / 100)) {
-        autoMoveSpeed += 0.01; // Zvýšenie rýchlosti
-        console.log(`Zrýchlenie! Aktuálna rýchlosť: ${autoMoveSpeed.toFixed(2)}`);
-    }
-
-    gameScore.value += autoMoveSpeed;
-    updateScoreDisplay();
-
-    renderer.render(scene, camera);
-}
-

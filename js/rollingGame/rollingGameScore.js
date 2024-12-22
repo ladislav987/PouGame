@@ -23,7 +23,7 @@ export function updateScoreDisplay() {
 export function showFinalScore() {
     const finalScoreElement = document.createElement('div');
     finalScoreElement.style.position = 'absolute';
-    finalScoreElement.style.top = '60%';
+    finalScoreElement.style.top = '50%';
     finalScoreElement.style.left = '50%';
     finalScoreElement.style.transform = 'translate(-50%, -50%)';
     finalScoreElement.style.color = 'white';
