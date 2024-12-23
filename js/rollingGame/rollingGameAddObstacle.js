@@ -23,9 +23,9 @@ export function addObstacle(scene, obstacles, x, y, z) {
 
         model.userData.boundingBox = boundingBox;
 
-        // Vizualizácia bounding boxu
-        const helper = new THREE.Box3Helper(boundingBox, 0xff0000);
-        scene.add(helper);
+        // // Vizualizácia bounding boxu
+        // const helper = new THREE.Box3Helper(boundingBox);
+        // scene.add(helper);
 
         scene.add(model);
         obstacles.push(model);
