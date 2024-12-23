@@ -40,7 +40,7 @@ export function createRollingGame(existingScene) {
     const texturePou = new THREE.TextureLoader().load('texture/pou.png');
     const materialSphere = new THREE.MeshBasicMaterial({ map: texturePou });
     pouSphere = new THREE.Mesh(geometrySphere, materialSphere);
-    pouSphere.position.set(0, 1, 145);
+    pouSphere.position.set(0, 2, 145);
     scene.add(pouSphere);
 
     addObstacle(scene, obstacles, 0, 2.5, 100);

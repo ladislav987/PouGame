@@ -1,28 +1,33 @@
 //rollingGameAddObstacle.js
 export function addObstacle(scene, obstacles, x, y, z) {
-    const loader = new THREE.GLTFLoader(); // GLTFLoader je dostupný priamo z HTML
+    const loader = new THREE.GLTFLoader();
     loader.load('./texture/toilet_paper/scene.gltf', (gltf) => {
-            const model = gltf.scene;
-            model.scale.set(3, 3, 3); // Nastav mierku podľa potreby
-            model.position.set(x, y, z);
-            model.traverse((child) => {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
+        const model = gltf.scene;
+        model.scale.set(3, 3, 3);
+        model.position.set(x, y, z);
 
-            // Vytvoríme Box3 pre kolízne detekcie
-            const box = new THREE.Box3().setFromObject(model);
-            model.userData.boundingBox = box; // Uložíme bounding box ako userData
-
-            scene.add(model);
-            obstacles.push(model); // Uloženie pre kolízie
-        },
-        (progress) => {
-            console.log(`Načítanie modelu: ${(progress.loaded / progress.total) * 100}%`);
-        },
-        (error) => {
-            console.error('Chyba pri načítavaní modelu:', error);
+        model.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
         });
+
+        // Vytvor bounding box
+        const boundingBox = new THREE.Box3().setFromObject(model);
+
+        // Posunutie bounding boxu tak, aby sedel s modelom
+        const correction = new THREE.Vector3(0, 0, 0); // Korekcia v osi Y
+        boundingBox.min.add(correction);
+        boundingBox.max.add(correction);
+
+        model.userData.boundingBox = boundingBox;
+
+        // Vizualizácia bounding boxu
+        const helper = new THREE.Box3Helper(boundingBox, 0xff0000);
+        scene.add(helper);
+
+        scene.add(model);
+        obstacles.push(model);
+    });
 }
