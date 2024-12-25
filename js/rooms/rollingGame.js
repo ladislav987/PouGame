@@ -10,6 +10,7 @@ import { onWindowResize } from '../rollingGame/rollingGameOnWindowResize.js';
 import { animate } from '../rollingGame/rollingGameAnimate.js';
 import { addBackground } from '../rollingGame/rollingGameAddBackground.js';
 import { addSunLight } from '../rollingGame/rollingGameAddSunLight.js';
+import { setupLevel1 } from '../rollingGame/rollingGameLevels.js';
 
 export let camera, renderer, controls, scene, pouSphere, obstacles = [];
 let boundaries = [];
@@ -48,11 +49,8 @@ export function createRollingGame(existingScene) {
     pouSphere.castShadow = true;
     scene.add(pouSphere);
 
-    addObstacle(scene, obstacles, 0, 2.5, 100);
-    addObstacle(scene, obstacles, 5, 2.5, 50);
-    addObstacle(scene, obstacles, -5, 2.5, 20);
+    setupLevel1(scene, obstacles); // Inicializácia levelu 1
 
-    // Pridanie slnečného svetla
     const { sunLight } = addSunLight(scene, renderer);
 
     createBoundaries(scene, boundaries);

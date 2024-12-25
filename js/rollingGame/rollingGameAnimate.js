@@ -1,4 +1,5 @@
 // rollingGameAnimate.js
+import { setupLevel2 } from './rollingGameLevels.js';
 import { checkCollision } from './rollingGameCheckCollision.js';
 import { endGame } from './rollingGameEndGame.js';
 import { updateScoreDisplay, showFinalScore } from './rollingGameScore.js';
@@ -7,6 +8,22 @@ export function animate(pouSphere, camera, controls, renderer, scene, obstacles,
     if (gameState.isGameOver) return;
 
     requestAnimationFrame(() => animate(pouSphere, camera, controls, renderer, scene, obstacles, boundaries, movement, speed, autoMoveSpeed, gameScore, gameState, sunLight));
+
+    // Prepnutie levelu na základe skóre
+    if (gameScore.value >= 200 && gameState.currentLevel === 1) {
+        gameState.currentLevel = 2; // Nastav nový level
+        console.log("Prechod na Level 2!");
+
+        // Resetovanie pozície Poua
+        pouSphere.position.set(0, 1.5, 145); // Počiatočná pozícia Poua
+        pouSphere.rotation.set(0, 0, 0); // Reset rotácie
+
+        // Nastavenie prekážok pre nový level
+        setupLevel2(scene, obstacles);
+
+        // Resetovanie rýchlosti, ak potrebné
+        autoMoveSpeed = 0.05;
+    }
 
     // Pohyb Poua
     pouSphere.position.z -= autoMoveSpeed;
@@ -52,6 +69,7 @@ export function animate(pouSphere, camera, controls, renderer, scene, obstacles,
 
     renderer.render(scene, camera);
 }
+
 
 function isCollidingWithBoundary(object, boundary) {
     const objectBox = new THREE.Box3().setFromObject(object);
