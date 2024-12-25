@@ -44,7 +44,7 @@ export function createRollingGame(existingScene) {
     const texturePou = new THREE.TextureLoader().load('texture/pou.png');
     const materialSphere = new THREE.MeshStandardMaterial({ map: texturePou });
     pouSphere = new THREE.Mesh(geometrySphere, materialSphere);
-    pouSphere.position.set(0, 2, 145);
+    pouSphere.position.set(0, 1, 145);
     pouSphere.castShadow = true; // Pou vrhá tiene
     scene.add(pouSphere);
 
