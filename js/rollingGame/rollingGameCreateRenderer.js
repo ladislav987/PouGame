@@ -1,3 +1,4 @@
+// rollingGameCreateRenderer.js
 export function createRenderer() {
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
