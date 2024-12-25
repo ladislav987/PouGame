@@ -1,3 +1,4 @@
+// rollingGameAnimate.js
 import { checkCollision } from './rollingGameCheckCollision.js';
 import { endGame } from './rollingGameEndGame.js';
 import { updateScoreDisplay, showFinalScore } from './rollingGameScore.js';
