@@ -3,10 +3,10 @@ import { checkCollision } from './rollingGameCheckCollision.js';
 import { endGame } from './rollingGameEndGame.js';
 import { updateScoreDisplay, showFinalScore } from './rollingGameScore.js';
 
-export function animate(pouSphere, camera, controls, renderer, scene, obstacles, boundaries, movement, speed, autoMoveSpeed, gameScore, gameState, sunLight, lightHelper) {
+export function animate(pouSphere, camera, controls, renderer, scene, obstacles, boundaries, movement, speed, autoMoveSpeed, gameScore, gameState, sunLight) {
     if (gameState.isGameOver) return;
 
-    requestAnimationFrame(() => animate(pouSphere, camera, controls, renderer, scene, obstacles, boundaries, movement, speed, autoMoveSpeed, gameScore, gameState, sunLight, lightHelper));
+    requestAnimationFrame(() => animate(pouSphere, camera, controls, renderer, scene, obstacles, boundaries, movement, speed, autoMoveSpeed, gameScore, gameState, sunLight));
 
     // Pohyb Poua
     pouSphere.position.z -= autoMoveSpeed;
@@ -31,9 +31,6 @@ export function animate(pouSphere, camera, controls, renderer, scene, obstacles,
     sunLight.position.copy(pouSphere.position.clone().add(lightOffset));
     sunLight.target.position.copy(pouSphere.position); // Svetlo sa zameriava na Poua
     sunLight.target.updateMatrixWorld();
-
-    // Aktualizácia vizualizácie tieňovej kamery
-    lightHelper.update();
 
     // Kolízne detekcie
     for (const obstacle of obstacles) {

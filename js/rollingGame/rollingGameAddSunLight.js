@@ -31,9 +31,5 @@ export function addSunLight(scene, renderer) {
     scene.add(target);
     sunLight.target = target;
 
-    // Vizualizácia oblasti tieňov
-    const lightHelper = new THREE.CameraHelper(sunLight.shadow.camera);
-    scene.add(lightHelper);
-
-    return { sunLight, lightHelper };
+    return { sunLight };
 }

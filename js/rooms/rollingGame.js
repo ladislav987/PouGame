@@ -4,7 +4,7 @@ import { createCamera } from '../rollingGame/rollingGameCreateCamera.js';
 import { createRenderer } from '../rollingGame/rollingGameCreateRenderer.js';
 import { addObstacle } from '../rollingGame/rollingGameAddObstacle.js';
 import { handleKeyDown, handleKeyUp } from '../rollingGame/rollingGameControls.js';
-import { gameScore, updateScoreDisplay } from '../rollingGame/rollingGameScore.js';
+import { gameScore } from '../rollingGame/rollingGameScore.js';
 import { createBoundaries } from '../rollingGame/rollingGameCreateBoundaries.js';
 import { onWindowResize } from '../rollingGame/rollingGameOnWindowResize.js';
 import { animate } from '../rollingGame/rollingGameAnimate.js';
@@ -53,7 +53,7 @@ export function createRollingGame(existingScene) {
     addObstacle(scene, obstacles, -5, 2.5, 20);
 
     // Pridanie slnečného svetla
-    const { sunLight, lightHelper } = addSunLight(scene, renderer);
+    const { sunLight } = addSunLight(scene, renderer);
 
     createBoundaries(scene, boundaries);
     addBackground(scene, '../texture/sky.jpg');
@@ -62,5 +62,5 @@ export function createRollingGame(existingScene) {
     window.addEventListener('keyup', (e) => handleKeyUp(e, movement, gameState.isGameOver));
     window.addEventListener('resize', () => onWindowResize(camera, renderer));
 
-    animate(pouSphere, camera, controls, renderer, scene, obstacles, boundaries, movement, speed, autoMoveSpeed, gameScore, gameState, sunLight, lightHelper);
+    animate(pouSphere, camera, controls, renderer, scene, obstacles, boundaries, movement, speed, autoMoveSpeed, gameScore, gameState, sunLight);
 }
