@@ -1,3 +1,4 @@
+// rollingGameOnWindowResize.js
 export function onWindowResize(camera, renderer) {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
