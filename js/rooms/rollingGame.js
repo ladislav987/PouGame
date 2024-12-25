@@ -9,7 +9,6 @@ import { createBoundaries } from '../rollingGame/rollingGameCreateBoundaries.js'
 import { onWindowResize } from '../rollingGame/rollingGameOnWindowResize.js';
 import { animate } from '../rollingGame/rollingGameAnimate.js';
 import { addBackground } from '../rollingGame/rollingGameAddBackground.js';
-import { addSunLight } from '../rollingGame/rollingGameAddSunLight.js';
 
 export let camera, renderer, controls, scene, pouSphere, obstacles = [];
 let boundaries = [];
@@ -37,26 +36,56 @@ export function createRollingGame(existingScene) {
     const materialPlane = new THREE.MeshStandardMaterial({ color: 0x747570 });
     const plane = new THREE.Mesh(geometryPlane, materialPlane);
     plane.rotation.x = -Math.PI / 2;
-    plane.receiveShadow = true; // Plocha prijíma tiene
+    plane.receiveShadow = true;
     scene.add(plane);
 
     const geometrySphere = new THREE.SphereGeometry(1, 32, 32);
     const texturePou = new THREE.TextureLoader().load('texture/pou.png');
     const materialSphere = new THREE.MeshStandardMaterial({ map: texturePou });
     pouSphere = new THREE.Mesh(geometrySphere, materialSphere);
-    pouSphere.position.set(0, 1, 145);
-    pouSphere.castShadow = true; // Pou vrhá tiene
+    pouSphere.position.set(0, 1.5, 145);
+    pouSphere.castShadow = true;
     scene.add(pouSphere);
 
     addObstacle(scene, obstacles, 0, 2.5, 100);
     addObstacle(scene, obstacles, 5, 2.5, 50);
     addObstacle(scene, obstacles, -5, 2.5, 20);
 
-    // Pridanie DirectionalLight
-    addSunLight(scene);
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1);
+    sunLight.position.set(30, 50, -50); // Svetlo je ďalej a vyššie, aby pokrylo viac priestoru
+    sunLight.castShadow = true;
 
-    const ambientLight = new THREE.AmbientLight(0x404040);
-    scene.add(ambientLight);
+    sunLight.shadow.camera.left = -80; // Rozšírenie oblasti naľavo
+    sunLight.shadow.camera.right = 80; // Rozšírenie oblasti napravo
+    sunLight.shadow.camera.top = 80; // Rozšírenie oblasti nahor
+    sunLight.shadow.camera.bottom = -80; // Rozšírenie oblasti nadol
+    sunLight.shadow.camera.near = 0.5;
+    sunLight.shadow.camera.far = 200; // Zvýšenie rozsahu do diaľky
+
+
+    // Maximálne rozlíšenie tieňov pre ultra vysokú kvalitu
+    sunLight.shadow.mapSize.width = 8192;
+    sunLight.shadow.mapSize.height = 8192;
+
+
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Jemné a realistické tiene
+
+
+
+// Pridanie svetla do scény
+    scene.add(sunLight);
+
+// Aktualizácia cieľa svetla (sleduje Poua)
+    const target = new THREE.Object3D();
+    target.position.set(0, 0, 0); // Smerovanie na platformu
+    scene.add(target);
+    sunLight.target = target;
+
+// Pridanie vizualizácie oblasti tieňov
+    const lightHelper = new THREE.CameraHelper(sunLight.shadow.camera);
+    scene.add(lightHelper);
+
 
     createBoundaries(scene, boundaries);
     addBackground(scene, '../texture/sky.jpg');
@@ -65,5 +94,5 @@ export function createRollingGame(existingScene) {
     window.addEventListener('keyup', (e) => handleKeyUp(e, movement, gameState.isGameOver));
     window.addEventListener('resize', () => onWindowResize(camera, renderer));
 
-    animate(pouSphere, camera, controls, renderer, scene, obstacles, boundaries, movement, speed, autoMoveSpeed, gameScore, gameState);
+    animate(pouSphere, camera, controls, renderer, scene, obstacles, boundaries, movement, speed, autoMoveSpeed, gameScore, gameState, sunLight, lightHelper);
 }
