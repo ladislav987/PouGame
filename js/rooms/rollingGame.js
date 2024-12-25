@@ -9,6 +9,7 @@ import { createBoundaries } from '../rollingGame/rollingGameCreateBoundaries.js'
 import { onWindowResize } from '../rollingGame/rollingGameOnWindowResize.js';
 import { animate } from '../rollingGame/rollingGameAnimate.js';
 import { addBackground } from '../rollingGame/rollingGameAddBackground.js';
+import { addSunLight } from '../rollingGame/rollingGameAddSunLight.js';
 
 export let camera, renderer, controls, scene, pouSphere, obstacles = [];
 let boundaries = [];
@@ -51,41 +52,8 @@ export function createRollingGame(existingScene) {
     addObstacle(scene, obstacles, 5, 2.5, 50);
     addObstacle(scene, obstacles, -5, 2.5, 20);
 
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1);
-    sunLight.position.set(30, 50, -50); // Svetlo je ďalej a vyššie, aby pokrylo viac priestoru
-    sunLight.castShadow = true;
-
-    sunLight.shadow.camera.left = -80; // Rozšírenie oblasti naľavo
-    sunLight.shadow.camera.right = 80; // Rozšírenie oblasti napravo
-    sunLight.shadow.camera.top = 80; // Rozšírenie oblasti nahor
-    sunLight.shadow.camera.bottom = -80; // Rozšírenie oblasti nadol
-    sunLight.shadow.camera.near = 0.5;
-    sunLight.shadow.camera.far = 200; // Zvýšenie rozsahu do diaľky
-
-
-    // Maximálne rozlíšenie tieňov pre ultra vysokú kvalitu
-    sunLight.shadow.mapSize.width = 8192;
-    sunLight.shadow.mapSize.height = 8192;
-
-
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Jemné a realistické tiene
-
-
-
-// Pridanie svetla do scény
-    scene.add(sunLight);
-
-// Aktualizácia cieľa svetla (sleduje Poua)
-    const target = new THREE.Object3D();
-    target.position.set(0, 0, 0); // Smerovanie na platformu
-    scene.add(target);
-    sunLight.target = target;
-
-// Pridanie vizualizácie oblasti tieňov
-    const lightHelper = new THREE.CameraHelper(sunLight.shadow.camera);
-    scene.add(lightHelper);
-
+    // Pridanie slnečného svetla
+    const { sunLight, lightHelper } = addSunLight(scene, renderer);
 
     createBoundaries(scene, boundaries);
     addBackground(scene, '../texture/sky.jpg');
