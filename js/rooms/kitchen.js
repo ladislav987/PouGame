@@ -1,4 +1,5 @@
 import { addPou } from '../pou.js';
+import { textures } from '../textureLoader.js'; // Import prednačítaných textúr
 
 let appleMesh = null;
 
@@ -9,17 +10,9 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2(); // normalizované súradnice myši
 
 export function createKitchen(scene) {
-    // Načítanie textúry pre pozadie s nastaveniami
-    const texture = new THREE.TextureLoader().load('texture/kitchen.jpg', (tex) => {
-        tex.wrapS = THREE.ClampToEdgeWrapping;
-        tex.wrapT = THREE.ClampToEdgeWrapping;
-        tex.minFilter = THREE.LinearFilter;  // alebo THREE.NearestFilter
-        tex.generateMipmaps = false;         // vypneme mipmapy
-    });
-
-    // Nastavíme veľkosť PlaneGeometry na 13.265 x 10, aby pozadie pokrývalo celé zorné pole kamery
+    // Použitie prednačítanej textúry pre pozadie
+    const materialBG = new THREE.MeshBasicMaterial({ map: textures.kitchen });
     const geometryBG = new THREE.PlaneGeometry(13.265, 10);
-    const materialBG = new THREE.MeshBasicMaterial({ map: texture });
     const backgroundPlane = new THREE.Mesh(geometryBG, materialBG);
     backgroundPlane.position.set(0, 0, 0);
     scene.add(backgroundPlane);
@@ -30,11 +23,10 @@ export function createKitchen(scene) {
     // Pridáme Poua
     addPou(scene);
 
-    // Pridáme jablko
-    const appleTexture = new THREE.TextureLoader().load('texture/apple2.png');
+    // Pridáme jablko pomocou prednačítanej textúry
     const geometryApple = new THREE.PlaneGeometry(1, 1); // veľkosť jablka
     const materialApple = new THREE.MeshBasicMaterial({
-        map: appleTexture,
+        map: textures.apple,
         transparent: true,
     });
     appleMesh = new THREE.Mesh(geometryApple, materialApple);

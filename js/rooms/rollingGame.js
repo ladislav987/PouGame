@@ -11,6 +11,7 @@ import { animate } from '../rollingGame/rollingGameAnimate.js';
 import { addBackground } from '../rollingGame/rollingGameAddBackground.js';
 import { addSunLight } from '../rollingGame/rollingGameAddSunLight.js';
 import { setupLevel1 } from '../rollingGame/rollingGameLevels.js';
+import { textures } from '../textureLoader.js'; // Import prednačítaných textúr
 
 export let camera, renderer, controls, scene, pouSphere, obstacles = [];
 let boundaries = [];
@@ -42,8 +43,7 @@ export function createRollingGame(existingScene) {
     scene.add(plane);
 
     const geometrySphere = new THREE.SphereGeometry(1, 32, 32);
-    const texturePou = new THREE.TextureLoader().load('texture/pou.png');
-    const materialSphere = new THREE.MeshStandardMaterial({ map: texturePou });
+    const materialSphere = new THREE.MeshStandardMaterial({ map: textures.pou }); // Použitie prednačítanej textúry
     pouSphere = new THREE.Mesh(geometrySphere, materialSphere);
     pouSphere.position.set(0, 1.5, 145);
     pouSphere.castShadow = true;
@@ -54,7 +54,7 @@ export function createRollingGame(existingScene) {
     const { sunLight } = addSunLight(scene, renderer);
 
     createBoundaries(scene, boundaries);
-    addBackground(scene, '../texture/sky.jpg');
+    addBackground(scene, textures.sky); // Prednačítané pozadie
 
     window.addEventListener('keydown', (e) => handleKeyDown(e, movement, gameState.isGameOver));
     window.addEventListener('keyup', (e) => handleKeyUp(e, movement, gameState.isGameOver));
