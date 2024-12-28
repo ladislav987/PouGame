@@ -1,9 +1,9 @@
 // livingRoom.js
 import { addPou } from '../pou.js';
-import { textures } from '../textureLoader.js'; // Import prednačítaných textúr
+import { textures } from '../textureLoader.js'; // Import of preloaded textures
 
 export function createLivingRoom(scene) {
-    // Použitie prednačítanej textúry pre obývačku
+    // Use the preloaded texture for the living room background
     const material = new THREE.MeshBasicMaterial({ map: textures.livingRoom });
     const geometry = new THREE.PlaneGeometry(13.265, 10);
 
@@ -11,6 +11,6 @@ export function createLivingRoom(scene) {
     backgroundPlane.position.set(0, 0, 0);
     scene.add(backgroundPlane);
 
-    // Pridanie Poua
+    // Add the Pou character
     addPou(scene);
 }

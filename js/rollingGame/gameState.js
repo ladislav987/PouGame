@@ -1,5 +1,5 @@
 // gameState.js
 export const gameState = {
-    isGameOver: false,
-    currentLevel: 1, // Inicializácia aktuálneho levelu
+    isGameOver: false, // Indicates whether the game is over
+    currentLevel: 1,   // Initializes the current level
 };

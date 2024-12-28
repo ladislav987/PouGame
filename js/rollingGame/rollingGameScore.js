@@ -1,11 +1,15 @@
 export const gameScore = {
-    value: 0, // Počiatočné skóre
+    value: 0, // Initial score
 };
 
-// Funkcia na aktualizáciu skóre na obrazovke
+/**
+ * Updates the score display on the screen.
+ * If the score display element doesn't exist, it creates one.
+ */
 export function updateScoreDisplay() {
     let scoreElement = document.getElementById('score-display');
     if (!scoreElement) {
+        // Create the score display element if it doesn't exist
         scoreElement = document.createElement('div');
         scoreElement.id = 'score-display';
         scoreElement.style.position = 'absolute';
@@ -16,10 +20,13 @@ export function updateScoreDisplay() {
         scoreElement.style.fontWeight = 'bold';
         document.body.appendChild(scoreElement);
     }
-    scoreElement.textContent = `Skóre: ${Math.floor(gameScore.value)}`;
+    // Update the score text
+    scoreElement.textContent = `Score: ${Math.floor(gameScore.value)}`;
 }
 
-// Funkcia na zobrazenie konečného skóre po skončení hry
+/**
+ * Displays the final score on the screen when the game ends.
+ */
 export function showFinalScore() {
     const finalScoreElement = document.createElement('div');
     finalScoreElement.style.position = 'absolute';
@@ -30,6 +37,6 @@ export function showFinalScore() {
     finalScoreElement.style.fontSize = '32px';
     finalScoreElement.style.fontWeight = 'bold';
     finalScoreElement.style.textAlign = 'center';
-    finalScoreElement.textContent = `Koniec hry! Vaše skóre: ${Math.floor(gameScore.value)}`;
+    finalScoreElement.textContent = `Game Over! Your Score: ${Math.floor(gameScore.value)}`;
     document.body.appendChild(finalScoreElement);
 }

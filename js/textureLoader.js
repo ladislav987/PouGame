@@ -4,9 +4,9 @@ import * as THREE from './threejs/build/three.module.js';
 export const textures = {};
 
 /**
- * Prednačítanie textúr.
- * @param {Object} texturePaths - Objekt s názvami a cestami k textúram.
- * @returns {Promise} - Sľub, ktorý sa vyrieši po načítaní všetkých textúr.
+ * Preloads textures.
+ * @param {Object} texturePaths - An object containing texture names and their corresponding file paths.
+ * @returns {Promise} - A promise that resolves when all textures are loaded.
  */
 export function preloadTextures(texturePaths) {
     const loader = new THREE.TextureLoader();
@@ -15,14 +15,14 @@ export function preloadTextures(texturePaths) {
             loader.load(
                 path,
                 (texture) => {
-                    textures[key] = texture;
+                    textures[key] = texture; // Store the loaded texture in the textures object
                     resolve();
                 },
                 undefined,
-                (error) => reject(error)
+                (error) => reject(error) // Reject the promise if an error occurs
             );
         });
     });
 
-    return Promise.all(promises);
+    return Promise.all(promises); // Wait for all texture loading promises to resolve
 }

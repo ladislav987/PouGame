@@ -9,7 +9,7 @@ import { preloadTextures, textures } from './textureLoader.js';
 export let camera, scene, renderer;
 
 export async function init() {
-    // Definujte cesty k textúram
+    // Define paths to textures
     const texturePaths = {
         pou: 'texture/pou2.png',
         health: 'texture/health.png',
@@ -22,16 +22,16 @@ export async function init() {
         sky: 'texture/sky.jpg',
     };
 
-    // Načítajte všetky textúry
+    // Preload all textures
     try {
         await preloadTextures(texturePaths);
-        console.log('Textúry boli úspešne načítané!');
+        console.log('Textures successfully loaded!');
     } catch (error) {
-        console.error('Chyba pri načítavaní textúr:', error);
+        console.error('Error loading textures:', error);
         return;
     }
 
-    // Inicializácia scény
+    // Initialize the scene
     scene = new THREE.Scene();
 
     const width = window.innerWidth;
@@ -39,7 +39,7 @@ export async function init() {
     const aspect = width / height;
     const viewSize = 5;
 
-    // Vytvorenie kamery
+    // Create the camera
     camera = new THREE.OrthographicCamera(
         -aspect * viewSize,
         aspect * viewSize,
@@ -51,24 +51,24 @@ export async function init() {
     camera.position.set(0, 0, 10);
     camera.lookAt(scene.position);
 
-    // Uloženie kamery na globálnu premennú pre prístup z iných modulov
+    // Save the camera globally for access from other modules
     window.camera = camera;
 
-    // Vytvorenie rendereru
+    // Create the renderer
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
     document.getElementById('game-container').appendChild(renderer.domElement);
 
-    // Predvolená miestnosť (obývačka)
+    // Set the default room (living room)
     createLivingRoom(scene);
 
-    // Tlačidlá na prepínanie miestností
+    // Create buttons for switching rooms
     createRoomButtons((roomName) => switchRoom(scene, roomName));
 
-    // Inicializácia stavu Poua
+    // Initialize Pou's state
     const pouState = new PouState();
 
-    // Vytvorenie kociek pre vizualizáciu zdravia, hladu a radosti
+    // Create cubes to visualize health, hunger, and joy levels
     const healthCube = createStateCube(0xff0000, -1, textures.health);
     const hungerCube = createStateCube(0x00ff00, 0, textures.hunger);
     const joyCube = createStateCube(0x0000ff, 1, textures.joy);
@@ -77,20 +77,20 @@ export async function init() {
     scene.add(hungerCube);
     scene.add(joyCube);
 
-    // Aktualizácia stavu Poua každých 10 sekúnd
+    // Update Pou's state every 10 seconds
     setInterval(() => {
         pouState.decreaseHunger(2);
         pouState.decreaseHealth(1);
         pouState.decreaseJoy(1);
-        console.log('Aktualizovaný stav Poua:', pouState.getState());
+        console.log('Updated Pou state:', pouState.getState());
 
-        // Aktualizácia mierky kociek podľa aktuálneho stavu
+        // Update cube scales based on current state
         updateCubeScale(healthCube, pouState.getState().health);
         updateCubeScale(hungerCube, pouState.getState().hunger);
         updateCubeScale(joyCube, pouState.getState().joy);
     }, 10000);
 
-    // Event listener pre zmenu veľkosti okna
+    // Event listener for window resize
     window.addEventListener('resize', onWindowResize);
 }
 
