@@ -1,4 +1,3 @@
-// rollingGameAnimate.js
 import { setupLevel2 } from './rollingGameLevels.js';
 import { checkCollision } from './rollingGameCheckCollision.js';
 import { endGame } from './rollingGameEndGame.js';
@@ -11,18 +10,24 @@ export function animate(pouSphere, camera, controls, renderer, scene, obstacles,
 
     // Switch to Level 2 based on the score
     if (gameScore.value >= 200 && gameState.currentLevel === 1) {
-        gameState.currentLevel = 2; // Set the new level
+        gameState.currentLevel = 2;
         console.log("Switching to Level 2!");
 
-        // Reset Pou's position
-        pouSphere.position.set(0, 1.5, 145); // Initial position of Pou
-        pouSphere.rotation.set(0, 0, 0); // Reset rotation
+        pouSphere.position.set(0, 1.5, 145);
+        pouSphere.rotation.set(0, 0, 0);
 
         // Set obstacles for the new level
         setupLevel2(scene, obstacles);
 
-        // Reset speed if needed
-        autoMoveSpeed = 0.05;
+        autoMoveSpeed = 0.30;
+    }
+
+    // Victory condition: stop the game at Level 2 and score 500
+    if (gameScore.value >= 500 && gameState.currentLevel === 2) {
+        console.log("Victory!");
+        showVictoryMessage(); // Display the victory message
+        endGame(gameState); // Stop the game
+        return;
     }
 
     // Move Pou
@@ -43,10 +48,9 @@ export function animate(pouSphere, camera, controls, renderer, scene, obstacles,
     controls.target.copy(pouSphere.position);
     controls.update();
 
-    // Adjust DirectionalLight position relative to Pou
-    const lightOffset = new THREE.Vector3(10, 20, 10); // Relative position of the light
+    const lightOffset = new THREE.Vector3(10, 20, 10);
     sunLight.position.copy(pouSphere.position.clone().add(lightOffset));
-    sunLight.target.position.copy(pouSphere.position); // Light focuses on Pou
+    sunLight.target.position.copy(pouSphere.position);
     sunLight.target.updateMatrixWorld();
 
     // Collision detection
@@ -59,13 +63,11 @@ export function animate(pouSphere, camera, controls, renderer, scene, obstacles,
         }
     }
 
-    // Increase speed based on score milestones
-    if (Math.floor(gameScore.value / 100) > Math.floor((gameScore.value - autoMoveSpeed) / 100)) {
-        autoMoveSpeed += 0.01;
+    if (Math.floor(gameScore.value / 10) > Math.floor((gameScore.value - autoMoveSpeed) / 10)) {
+        autoMoveSpeed += 0.005;
         console.log(`Speed up! Current speed: ${autoMoveSpeed.toFixed(2)}`);
     }
 
-    // Update score and display
     gameScore.value += autoMoveSpeed;
     updateScoreDisplay();
 
@@ -76,4 +78,18 @@ function isCollidingWithBoundary(object, boundary) {
     const objectBox = new THREE.Box3().setFromObject(object);
     const boundaryBox = new THREE.Box3().setFromObject(boundary);
     return objectBox.intersectsBox(boundaryBox);
+}
+
+function showVictoryMessage() {
+    const victoryDiv = document.createElement('div');
+    victoryDiv.style.position = 'absolute';
+    victoryDiv.style.top = '50%';
+    victoryDiv.style.left = '50%';
+    victoryDiv.style.transform = 'translate(-50%, -50%)';
+    victoryDiv.style.fontSize = '36px';
+    victoryDiv.style.color = 'green';
+    victoryDiv.style.fontWeight = 'bold';
+    victoryDiv.style.zIndex = '1000';
+    victoryDiv.textContent = 'Victory!';
+    document.body.appendChild(victoryDiv);
 }

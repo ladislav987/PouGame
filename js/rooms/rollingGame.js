@@ -2,7 +2,6 @@
 import { gameState } from '../rollingGame/gameState.js';
 import { createCamera } from '../rollingGame/rollingGameCreateCamera.js';
 import { createRenderer } from '../rollingGame/rollingGameCreateRenderer.js';
-import { addObstacle } from '../rollingGame/rollingGameAddObstacle.js';
 import { handleKeyDown, handleKeyUp } from '../rollingGame/rollingGameControls.js';
 import { gameScore } from '../rollingGame/rollingGameScore.js';
 import { createBoundaries } from '../rollingGame/rollingGameCreateBoundaries.js';
@@ -15,8 +14,8 @@ import { setupLevel1 } from '../rollingGame/rollingGameLevels.js';
 export let camera, renderer, controls, scene, pouSphere, obstacles = [];
 let boundaries = [];
 const movement = { a: false, d: false };
-let speed = 0.1;
-let autoMoveSpeed = 0.05;
+let speed = 0.2;
+let autoMoveSpeed = 0.18;
 
 export function createRollingGame(existingScene) {
     scene = existingScene || new THREE.Scene();
