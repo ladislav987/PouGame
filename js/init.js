@@ -1,9 +1,6 @@
 // init.js
 import { createLivingRoom } from './rooms/livingRoom.js';
 import { createRoomButtons, switchRoom } from './ui.js';
-import { PouState } from './pouState.js';
-import * as THREE from './threejs/build/three.module.js';
-import { createStateCube, updateCubeScale } from './cubeUtils.js';
 
 export let camera, scene, renderer;
 
@@ -42,30 +39,30 @@ export function init() {
         switchRoom(scene, roomName);
     });
 
-    // Create PouState instance
-    const pouState = new PouState();
-
-    // Create cubes for health, hunger, and joy with respective icons
-    const healthCube = createStateCube(0xff0000, -1, 'texture/health.png');
-    const hungerCube = createStateCube(0x00ff00, 0, 'texture/hunger.png');
-    const joyCube = createStateCube(0x0000ff, 1, 'texture/joy.png');
-
-    scene.add(healthCube);
-    scene.add(hungerCube);
-    scene.add(joyCube);
-
-    // Decrease hunger every 30 seconds
-    setInterval(() => {
-        pouState.decreaseHunger(2);
-        pouState.decreaseHealth(1);
-        pouState.decreaseJoy(1);
-        console.log('State updated:', pouState.getState());
-
-        // Update cube scales
-        updateCubeScale(healthCube, pouState.getState().health);
-        updateCubeScale(hungerCube, pouState.getState().hunger);
-        updateCubeScale(joyCube, pouState.getState().joy);
-    }, 10000);
+    // // Create PouState instance
+    // const pouState = new PouState();
+    //
+    // // Create cubes for health, hunger, and joy with respective icons
+    // const healthCube = createStateCube(0xff0000, -1, 'texture/health.png');
+    // const hungerCube = createStateCube(0x00ff00, 0, 'texture/hunger.png');
+    // const joyCube = createStateCube(0x0000ff, 1, 'texture/joy.png');
+    //
+    // scene.add(healthCube);
+    // scene.add(hungerCube);
+    // scene.add(joyCube);
+    //
+    // // Decrease hunger every 30 seconds
+    // setInterval(() => {
+    //     pouState.decreaseHunger(2);
+    //     pouState.decreaseHealth(1);
+    //     pouState.decreaseJoy(1);
+    //     console.log('State updated:', pouState.getState());
+    //
+    //     // Update cube scales
+    //     updateCubeScale(healthCube, pouState.getState().health);
+    //     updateCubeScale(hungerCube, pouState.getState().hunger);
+    //     updateCubeScale(joyCube, pouState.getState().joy);
+    // }, 10000);
 
     window.addEventListener('resize', onWindowResize);
 }
