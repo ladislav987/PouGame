@@ -1,28 +1,47 @@
 // textureLoader.js
 import * as THREE from './threejs/build/three.module.js';
 
-export const textures = {};
+const texturePaths = [
+    'texture/pou2.png',
+    'texture/livingroom.jpg',
+    'texture/playground.jpg',
+    'texture/kitchen.jpg',
+    'texture/apple2.png',
+    'texture/sky.jpg',
+    'texture/health.png',
+    'texture/hunger.png',
+    'texture/joy.png',
+    'texture/toilet_paper/textures/TP_shader_diffuse.png',
+];
 
 /**
- * Preloads textures.
- * @param {Object} texturePaths - An object containing texture names and their corresponding file paths.
- * @returns {Promise} - A promise that resolves when all textures are loaded.
+ * Načíta všetky textúry a vráti Promise,
+ * ktorý rozresolve s objektom, kde key je cesta
+ * a value je THREE.Texture.
  */
-export function preloadTextures(texturePaths) {
-    const loader = new THREE.TextureLoader();
-    const promises = Object.entries(texturePaths).map(([key, path]) => {
-        return new Promise((resolve, reject) => {
+export function preloadAllTextures() {
+    return new Promise((resolve, reject) => {
+        const loader = new THREE.TextureLoader();
+        const loadedTextures = {};
+        let loadedCount = 0;
+
+        texturePaths.forEach((path) => {
             loader.load(
                 path,
                 (texture) => {
-                    textures[key] = texture; // Store the loaded texture in the textures object
-                    resolve();
+                    loadedTextures[path] = texture;
+                    loadedCount++;
+                    // Keď máme načítané všetky, rozresolve Promise
+                    if (loadedCount === texturePaths.length) {
+                        resolve(loadedTextures);
+                    }
                 },
                 undefined,
-                (error) => reject(error) // Reject the promise if an error occurs
+                (error) => {
+                    console.error('Chyba pri načítaní textúry:', path, error);
+                    reject(error);
+                }
             );
         });
     });
-
-    return Promise.all(promises); // Wait for all texture loading promises to resolve
 }

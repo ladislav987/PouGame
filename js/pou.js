@@ -1,26 +1,27 @@
 // pou.js
 
-import { textures } from './textureLoader.js';
-
 /**
- * Adds a 2D Pou character to the scene.
- * @param {THREE.Scene} scene - The scene to which the Pou character will be added
+ * Pridá do scény 2D postavičku Poua.
+ * @param {THREE.Scene} scene - scéna, do ktorej sa má Pou pridať
  */
 export function addPou(scene) {
-    const pouTexture = textures.pou; // The texture for Pou
+    // Načítame textúru (napr. 'pou.png') z priečinka 'texture/'
+    const pouTexture = new THREE.TextureLoader().load('texture/pou2.png');
+
+    // Vytvoríme PlaneGeometry s veľkosťou napr. 2×2 (podľa toho, aký veľký má byť Pou)
     const geometry = new THREE.PlaneGeometry(2, 2);
 
-    // If pou.png has a transparent background, enable transparency
+    // Ak má pou.png priesvitné pozadie, nastavíme transparent: true
     const material = new THREE.MeshBasicMaterial({
         map: pouTexture,
-        transparent: true,
+        transparent: true
     });
 
-    // Create a Mesh and slightly shift it forward on the Z-axis (e.g., 0.1)
-    // to ensure it doesn't render behind the background
+    // Vytvoríme Mesh a mierne ho posunieme dopredu na osi Z (napr. 0.1),
+    // aby sa nevykresľoval za pozadím
     const pouMesh = new THREE.Mesh(geometry, material);
     pouMesh.position.set(0, 0, 0.1);
 
-    // Add the Pou character to the scene
+    // Pridáme Poua do scény
     scene.add(pouMesh);
 }
