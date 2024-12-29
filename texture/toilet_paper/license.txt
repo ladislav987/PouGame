@@ -1,0 +1,11 @@
+Model Information:
+* title:	Toilet Paper roll
+* source:	https://sketchfab.com/3d-models/toilet-paper-roll-ea0cf48616e34708b73c82eb7c7366ca
+* author:	jaxmoss (https://sketchfab.com/jaxmoss)
+
+Model License:
+* license type:	CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
+* requirements:	Author must be credited. Modified versions must have the same license. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Toilet Paper roll" (https://sketchfab.com/3d-models/toilet-paper-roll-ea0cf48616e34708b73c82eb7c7366ca) by jaxmoss (https://sketchfab.com/jaxmoss) licensed under CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
