@@ -2,7 +2,6 @@
 import { gameState } from '../rollingGame/gameState.js';
 import { createCamera } from '../rollingGame/rollingGameCreateCamera.js';
 import { createRenderer } from '../rollingGame/rollingGameCreateRenderer.js';
-import { addObstacle } from '../rollingGame/rollingGameAddObstacle.js';
 import { handleKeyDown, handleKeyUp } from '../rollingGame/rollingGameControls.js';
 import { gameScore } from '../rollingGame/rollingGameScore.js';
 import { createBoundaries } from '../rollingGame/rollingGameCreateBoundaries.js';
