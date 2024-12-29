@@ -42,7 +42,7 @@ export function createRollingGame(existingScene) {
     scene.add(plane);
 
     const geometrySphere = new THREE.SphereGeometry(1, 32, 32);
-    const texturePou = new THREE.TextureLoader().load('texture/pou2.png');
+    const texturePou = new THREE.TextureLoader().load('texture/pou.png');
     const materialSphere = new THREE.MeshStandardMaterial({ map: texturePou });
     pouSphere = new THREE.Mesh(geometrySphere, materialSphere);
     pouSphere.position.set(0, 1.5, 145);

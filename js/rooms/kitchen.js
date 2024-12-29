@@ -1,67 +1,60 @@
+// kitchen.js
 import { addPou } from '../pou.js';
+import { textures } from '../textureLoader.js'; // Import of preloaded textures
 
 let appleMesh = null;
 
-// Premenné pre drag & drop
+// Variables for drag & drop functionality
 let isDragging = false;
 let selectedObject = null;
 const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2(); // normalizované súradnice myši
+const mouse = new THREE.Vector2(); // Normalized mouse coordinates
 
 export function createKitchen(scene) {
-    // Načítanie textúry pre pozadie s nastaveniami
-    const texture = new THREE.TextureLoader().load('texture/kitchen.jpg', (tex) => {
-        tex.wrapS = THREE.ClampToEdgeWrapping;
-        tex.wrapT = THREE.ClampToEdgeWrapping;
-        tex.minFilter = THREE.LinearFilter;  // alebo THREE.NearestFilter
-        tex.generateMipmaps = false;         // vypneme mipmapy
-    });
-
-    // Nastavíme veľkosť PlaneGeometry na 13.265 x 10, aby pozadie pokrývalo celé zorné pole kamery
+    // Use the preloaded texture for the background
+    const materialBG = new THREE.MeshBasicMaterial({ map: textures.kitchen });
     const geometryBG = new THREE.PlaneGeometry(13.265, 10);
-    const materialBG = new THREE.MeshBasicMaterial({ map: texture });
     const backgroundPlane = new THREE.Mesh(geometryBG, materialBG);
     backgroundPlane.position.set(0, 0, 0);
     scene.add(backgroundPlane);
 
-    // Uložíme pozadie pre prípadný Raycaster
+    // Save the background plane for potential use with the Raycaster
     window.sceneBackground = backgroundPlane;
 
-    // Pridáme Poua
+    // Add Pou character
     addPou(scene);
 
-    // Pridáme jablko
-    const appleTexture = new THREE.TextureLoader().load('texture/apple2.png');
-    const geometryApple = new THREE.PlaneGeometry(1, 1); // veľkosť jablka
+    // Add an apple using the preloaded texture
+    const geometryApple = new THREE.PlaneGeometry(1, 1); // Size of the apple
     const materialApple = new THREE.MeshBasicMaterial({
-        map: appleTexture,
+        map: textures.apple,
         transparent: true,
     });
     appleMesh = new THREE.Mesh(geometryApple, materialApple);
-    appleMesh.position.set(2, -1, 0.1); // umiestnenie jablka
+    appleMesh.position.set(2, -1, 0.1); // Position of the apple
     scene.add(appleMesh);
 
-    // Event listenery pre ťahanie myšou
+    // Event listeners for mouse drag
     window.addEventListener('mousedown', onMouseDown);
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
 }
 
 /**
- * Zistí, či klikáme na jablko (appleMesh).
+ * Checks if the user clicked on the apple (appleMesh).
  */
 function onMouseDown(event) {
-    // 1) Normalizované súradnice myši
+    // 1) Normalize mouse coordinates
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    // 2) Nastavíme raycaster z myši do kamery
+    // 2) Set raycaster from the mouse position into the camera view
     raycaster.setFromCamera(mouse, window.camera);
 
-    // 3) Zistíme, či lúč preťal appleMesh
+    // 3) Check if the ray intersects with appleMesh
     const intersects = raycaster.intersectObjects([appleMesh], false);
     if (intersects.length > 0) {
-        // Klikli sme na jablko
+        // The user clicked on the apple
         isDragging = true;
         selectedObject = appleMesh;
     }
@@ -70,18 +63,18 @@ function onMouseDown(event) {
 function onMouseMove(event) {
     if (!isDragging || !selectedObject) return;
 
-    // 1) Normalizované súradnice
+    // 1) Normalize mouse coordinates
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    // 2) Prepočet myši na súradnice scény
+    // 2) Convert mouse coordinates to scene coordinates
     const vector = new THREE.Vector3(mouse.x, mouse.y, 0);
     vector.unproject(window.camera);
 
-    // 3) Nastavíme novú pozíciu jablka
+    // 3) Set the new position of the apple
     selectedObject.position.x = vector.x;
     selectedObject.position.y = vector.y;
-    // Zachovávame z=0.1
+    // Keep z = 0.1
 }
 
 function onMouseUp() {

@@ -1,12 +1,12 @@
 // rollingGameAddSunLight.js
 
 export function addSunLight(scene, renderer) {
-    // Vytvorenie DirectionalLight na imitáciu slnka
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1); // Biele svetlo
-    sunLight.position.set(30, 50, -50); // Svetlo je ďalej a vyššie
-    sunLight.castShadow = true; // Povolenie tieňov
+    // Create a DirectionalLight to simulate sunlight
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1); // White light
+    sunLight.position.set(30, 50, -50); // Position the light higher and farther away
+    sunLight.castShadow = true; // Enable shadows
 
-    // Nastavenie oblasti, kde budú tiene renderované
+    // Set the area for shadow rendering
     sunLight.shadow.camera.left = -80;
     sunLight.shadow.camera.right = 80;
     sunLight.shadow.camera.top = 80;
@@ -14,20 +14,20 @@ export function addSunLight(scene, renderer) {
     sunLight.shadow.camera.near = 0.5;
     sunLight.shadow.camera.far = 200;
 
-    // Nastavenie rozlíšenia tieňov
+    // Set shadow resolution
     sunLight.shadow.mapSize.width = 8192;
     sunLight.shadow.mapSize.height = 8192;
 
-    // Povolenie jemných tieňov
+    // Enable soft shadows
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // Pridanie svetla do scény
+    // Add the light to the scene
     scene.add(sunLight);
 
-    // Nastavenie cieľa svetla
+    // Create a target object for the light
     const target = new THREE.Object3D();
-    target.position.set(0, 0, 0); // Smerovanie na platformu
+    target.position.set(0, 0, 0); // Point the light toward the platform
     scene.add(target);
     sunLight.target = target;
 
