@@ -1,16 +1,26 @@
-// rollingGameAddBackground.js
-export function addBackground(scene, texture) {
-    // Create a sphere geometry
-    const geometrySphere = new THREE.SphereGeometry(500, 32, 32); // Larger radius for the sphere
+export function addBackground(scene, texturePath) {
+    // Vytvorenie geometrie sféry
+    const geometrySphere = new THREE.SphereGeometry(500, 32, 32); // Väčší polomer sféry
 
-    // Create a material with the preloaded texture
-    const materialSphere = new THREE.MeshBasicMaterial({
-        map: texture,
-        side: THREE.BackSide, // Set to BackSide to make the background visible from inside the sphere
-    });
+    // Načítanie textúry
+    const loader = new THREE.TextureLoader();
+    loader.load(
+        texturePath, // Cesta k textúre
+        function (texture) {
+            // Vytvorenie materiálu s textúrou
+            const materialSphere = new THREE.MeshBasicMaterial({
+                map: texture,
+                side: THREE.BackSide // Nastavenie BackSide, aby bolo pozadie viditeľné zvnútra sféry
+            });
 
-    // Create the sphere
-    const sphere = new THREE.Mesh(geometrySphere, materialSphere);
-    sphere.position.set(0, 0, 0); // Position of the sphere
-    scene.add(sphere); // Add the sphere to the scene
+            // Vytvorenie sféry
+            const sphere = new THREE.Mesh(geometrySphere, materialSphere);
+            sphere.position.set(0, 0, 0); // Pozícia sféry
+            scene.add(sphere); // Pridanie sféry do scény
+        },
+        undefined,
+        function (error) {
+            console.error('Chyba pri načítavaní textúry:', error);
+        }
+    );
 }

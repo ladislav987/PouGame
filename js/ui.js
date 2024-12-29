@@ -1,24 +1,25 @@
 // ui.js
 
+// Importujeme funkcie na vytváranie jednotlivých miestností
 import { createLivingRoom } from './rooms/livingRoom.js';
 import { createKitchen } from './rooms/kitchen.js';
 import { createPlayground } from './rooms/playground.js';
 import { createRollingGame } from './rooms/rollingGame.js';
 
 /**
- * Creates HTML buttons (Living Room, Kitchen, Playground, Rolling Game)
- * and assigns them the function `switchRoom(roomName)`.
+ * Vytvorí HTML tlačidlá (Living, Kitchen, Playground, RollingGame)
+ * a priradí im funkciu switchRoom(roomName).
  *
- * @param {Function} switchRoomFn - The function to call when changing rooms
+ * @param {Function} switchRoomFn - Funkcia, ktorú voláme pri zmene miestnosti
  */
 export function createRoomButtons(switchRoomFn) {
     const container = document.createElement('div');
     container.style.position = 'absolute';
     container.style.top = '10px';
     container.style.left = '10px';
-    container.style.zIndex = '999'; // Ensures buttons are displayed above the canvas
+    container.style.zIndex = '999'; // Aby boli tlačidlá nad canvasom
 
-    // Room names (keys) and button labels
+    // Názvy miestností (kľúče) a text na tlačidle
     const rooms = [
         { key: 'living', label: 'Living Room' },
         { key: 'kitchen', label: 'Kitchen' },
@@ -30,8 +31,7 @@ export function createRoomButtons(switchRoomFn) {
         const btn = document.createElement('button');
         btn.textContent = room.label;
         btn.style.marginRight = '5px';
-        // Call switchRoomFn with the room key when the button is clicked
-        btn.onclick = () => switchRoomFn(room.key);
+        btn.onclick = () => switchRoomFn(room.key); // pri kliknutí voláme switchRoomFn("living"/"kitchen"/... atď.)
         container.appendChild(btn);
     });
 
@@ -39,26 +39,26 @@ export function createRoomButtons(switchRoomFn) {
 }
 
 /**
- * Removes all objects from the scene and calls the appropriate function
- * to create the specified room.
+ * Odstráni všetky objekty zo scény a zavolá príslušnú funkciu
+ * na vytvorenie danej miestnosti.
  *
- * @param {THREE.Scene} scene - The scene to which the room will be added
- * @param {string} roomName - The name of the room to display
+ * @param {THREE.Scene} scene - Scéna, do ktorej chceme pridať miestnosť
+ * @param {string} roomName - reťazec určujúci, ktorú miestnosť zobraziť
  */
 export function switchRoom(scene, roomName) {
-    // Clear existing objects from the scene
-    // Note: `scene.clear()` removes *everything*, including the camera and lights.
-    // Here, we prefer to remove only child objects that are meshes (e.g., planes with textures).
-    // Alternatively, you can use `.clear()` and re-add the camera and lights if that suits your needs.
+    // Vymažeme staré objekty zo scény
+    // Poznámka: scene.clear() zmaže *všetko*, vrátane kamery a svetiel,
+    // preto radšej mažeme len potomkov, ktorí sú "Mesh" (čiže plane s textúrami).
+    // Alebo môžeš spraviť .clear() a znova pridať kameru, ak to tak vyhovuje.
 
-    // Create a copy of the scene's children to safely iterate while removing
+    // Kopia potomkov, aby sme mohli scene.remove() volať bezpečne v cykle
     const toRemove = [...scene.children];
     toRemove.forEach(obj => {
-        // Avoid removing cameras/lights by checking the object type
+        // Ak nechceš vymazať kameru/lights, skontroluj typ
         if (obj.isMesh) scene.remove(obj);
     });
 
-    // Add the new room to the scene based on the `roomName` parameter
+    // Podľa parametra `roomName` pridáme do scény novú miestnosť
     switch (roomName) {
         case 'living':
             createLivingRoom(scene);
@@ -73,7 +73,7 @@ export function switchRoom(scene, roomName) {
             createRollingGame(scene);
             break;
         default:
-            // Default to the living room if no valid room name is provided
+            // Defaultne napr. obývačka
             createLivingRoom(scene);
     }
 }
